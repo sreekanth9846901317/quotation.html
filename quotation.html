@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quotation Form</title>
+<meta charset="UTF-8">
+</head>
+<body style="font-family:Arial;max-width:400px;margin:auto;padding:20px;">
+
+<h3>Quotation Entry</h3>
+
+<label>Quotation Number</label><br>
+<input id="quotation" style="width:100%;padding:8px;"><br><br>
+
+<label>Company Name</label><br>
+<input id="company" style="width:100%;padding:8px;"><br><br>
+
+<label>Value</label><br>
+<input id="value" style="width:100%;padding:8px;"><br><br>
+
+<button onclick="saveData()">Save</button>
+<button onclick="loadData()">Load</button>
+
+<p id="msg" style="color:green;"></p>
+
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbwLDvxS-zLHR2cW2uCotgZxrfEeBCDs46D2wNrSTvha6a1-yyiWoSRyqdCejH_EbaQa/exec";
+
+function saveData() {
+  const quotation = document.getElementById('quotation').value;
+  const company = document.getElementById('company').value;
+  const value = document.getElementById('value').value;
+
+  fetch(scriptURL, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quotation, company, value })
+  })
+  .then(r => r.json())
+  .then(() => {
+    document.getElementById('msg').innerHTML = "Saved Successfully!";
+  });
+}
+
+function loadData() {
+  const q = document.getElementById('quotation').value;
+
+  fetch(scriptURL + "?q=" + q)
+    .then(res => res.json())
+    .then(result => {
+      if (result.status === "FOUND") {
+        document.getElementById('company').value = result.company;
+        document.getElementById('value').value = result.value;
+      } else {
+        alert("Not found");
+      }
+    });
+}
+</script>
+
+</body>
+</html>
